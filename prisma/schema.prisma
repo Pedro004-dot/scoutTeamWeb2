@@ -1,0 +1,342 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id_usuario        String        @id @default(uuid())
+  email             String        @unique
+  senha             String
+  perfil            String
+  nome_usuario      String        @unique
+  Pessoa            Pessoa?      
+
+  Posts             Postagem[]
+  Likes             Curtida[]
+  Comments          Comentario[]
+  Shares            Compartilhamento[]
+  SavedPosts        PostagemSalva[]
+  Organizadores     Organizador[] 
+  Times             Time[]        
+  Treinadores       Treinador[]   
+  Atletas           Atleta[]      
+  Empresarios       Empresario[]  
+}
+
+model Pessoa {
+  id_pessoa        String @id @default(uuid())
+  id_usuario       String      @unique
+  cidade_endereco  String
+  estado_endereco  String
+  data_nascimento  DateTime
+  nacionalidade    String
+  telefone_contato String
+  foto             String?
+  nome             String
+  Usuario          Usuario    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+}
+
+/////////////////////// REDE SOCIAL ///////////////////////
+model Postagem {
+  id_postagem    String @id @default(uuid())
+  id_usuario     String
+  conteudo       String
+  url_imagem     String?
+  criado_em      DateTime @default(now())
+  Usuario        Usuario     @relation(fields: [id_usuario], references: [id_usuario])
+
+  Curtidas       Curtida[]
+  Comentarios    Comentario[]
+  Compartilhamentos Compartilhamento[]
+  PostagensSalvas PostagemSalva[]
+}
+
+model Curtida {
+  id_curtida    String @id @default(uuid())
+  id_usuario    String
+  id_postagem   String
+  criado_em     DateTime @default(now())
+  Usuario       Usuario     @relation(fields: [id_usuario], references: [id_usuario])
+  Postagem      Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+}
+
+model Comentario {
+  id_comentario String @id @default(uuid())
+  id_usuario    String
+  id_postagem   String
+  conteudo      String
+  criado_em     DateTime @default(now())
+  Usuario       Usuario     @relation(fields: [id_usuario], references: [id_usuario])
+  Postagem      Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+}
+
+model Compartilhamento {
+  id_compartilhamento String @id @default(uuid())
+  id_usuario          String
+  id_postagem         String
+  criado_em           DateTime @default(now())
+  Usuario             Usuario     @relation(fields: [id_usuario], references: [id_usuario])
+  Postagem            Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+}
+
+model PostagemSalva {
+  id_postagemsalva String @id @default(uuid())
+  id_usuario       String
+  id_postagem      String
+  criado_em        DateTime @default(now())
+  Usuario          Usuario     @relation(fields: [id_usuario], references: [id_usuario])
+  Postagem         Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+}
+
+/////////////////////// PERFIS ///////////////////////
+model Organizador {
+  id_organizador  String @id @default(uuid())
+  id_usuario      String
+  Usuario         Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
+
+  Competicoes     Competicao[]
+}
+
+model Time {
+  id_time            String @id @default(uuid())
+  categorias         String
+  modelo_uniforme    String?
+  escudo             String?
+  id_usuario         String
+  id_competicao      String
+  Usuario            Usuario       @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
+  Competicoes        Competicao    @relation(fields: [id_competicao], references: [id_competicao])
+  Atletas            Atleta[]
+  Treinadores        Treinador[]
+  Jogos              Jogo[]
+  Estadios           Estadio[]
+  DiretoriaTime      DiretoriaTime[]
+  EscalacoesTime     EscalacaoTime[]
+  Historico          HistoricoClubeAtleta[]
+  Teste              Teste[]
+  HistoricoTreinador HistoricoClubeTreinador[]
+}
+
+model Treinador {
+  id_treinador            String @id @default(uuid())
+  id_time                 String
+  cref                    String?
+  categoria               String
+  id_usuario              String
+  Usuario                 Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
+  Time                    Time      @relation(fields: [id_time], references: [id_time])
+  AtletaJogos             AtletaJogo[]
+  HistoricoTreinador      HistoricoClubeTreinador[]
+  
+}
+
+model Atleta {
+  id_atleta           String @id @default(uuid())
+  id_usuario          String
+  id_time             String?
+  altura              Float?
+  peso                Float?
+  score               Float?
+  id_empresario       String?
+  caracteristicasJogo String[]
+  posicoes            String[]
+  Usuario             Usuario     @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
+  Time                Time  ?      @relation(fields: [id_time], references: [id_time])
+  Empresario          Empresario ? @relation(fields: [id_empresario], references: [id_empresario])
+  Eventos             Evento[]
+  EscalacoesTime      EscalacaoTime[]
+  AtletaJogos         AtletaJogo[]
+  Historico           HistoricoClubeAtleta[]
+  Lesoes              Lesoes[]
+  Teste               Teste[]
+  Educacao            Educacao[]
+  ExamesMedico        ExameMedico[]
+
+}
+
+model Empresario {
+  id_empresario   String @id @default(uuid())
+  id_usuario      String
+  categoria       String
+  Usuario         Usuario     @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
+  Atletas         Atleta[]
+}
+
+/////////////////////// CAMPEONATO///////////////////////
+
+model Competicao {
+  id_competicao   String @id @default(uuid())
+  id_organizador  String
+  orgao_publico   Boolean
+  data_inicio     DateTime
+  data_fim        DateTime
+  regulamento     String
+  Organizador     Organizador @relation(fields: [id_organizador], references: [id_organizador])
+  Jogos           Jogo[]
+  Times           Time[]
+}
+
+model Jogo {
+  id_jogo         String @id @default(uuid())
+  id_time         String
+  id_competicao   String
+  gols_time       Int
+  formacao_time   String
+  Time            Time        @relation(fields: [id_time], references: [id_time])
+  Competicao      Competicao  @relation(fields: [id_competicao], references: [id_competicao])
+  Partidas        Partida[]
+  Eventos         Evento[]
+  EscalacoesTime  EscalacaoTime[]
+  AtletaJogos     AtletaJogo[]
+}
+
+model Partida {
+  id_partida      String @id @default(uuid())
+  dia_jogo        DateTime
+  id_estadio      String
+  id_jogo         String
+  sumula          String
+  Jogo            Jogo      @relation(fields: [id_jogo], references: [id_jogo])
+  Estadio         Estadio   @relation(fields: [id_estadio], references: [id_estadio])
+  Arbitros        Arbitro[]
+}
+
+model Arbitro {
+  id_arbitro      String @id @default(uuid())
+  nome            String
+  tipo_arbitragem String
+  id_partida      String
+  Partida         Partida    @relation(fields: [id_partida], references: [id_partida])
+}
+
+model Evento {
+  id_evento       String @id @default(uuid())
+  tipo_evento     String
+  minuto_jogo     Int
+  id_atleta       String
+  id_jogo         String
+  Atleta          Atleta   @relation(fields: [id_atleta], references: [id_atleta])
+  Jogo            Jogo     @relation(fields: [id_jogo], references: [id_jogo])
+}
+
+model EscalacaoTime {
+  id_EscalacaoTime String @id @default(uuid())
+  posicao          String 
+  id_atleta        String
+  id_jogo          String
+  id_time          String
+  
+  Time             Time      @relation(fields: [id_time], references: [id_time])
+  Atleta           Atleta    @relation(fields: [id_atleta], references: [id_atleta])
+  Jogo             Jogo      @relation(fields: [id_jogo], references: [id_jogo])
+}
+
+/////////////////////// TIME ///////////////////////
+
+model Estadio {
+  id_estadio      String @id @default(uuid())
+  nome            String
+  cidade_endereco String
+  estado_endereco String
+  capacidade      Int
+  tipo_gramado    String
+  id_time         String
+  Time            Time      @relation(fields: [id_time], references: [id_time])
+  Partidas        Partida[]
+}
+
+model DiretoriaTime {
+  id_diretoriaTime String @id @default(uuid())
+  cargo            String
+  data_inicio      DateTime
+  data_final       DateTime
+  id_time          String
+  Time            Time      @relation(fields: [id_time], references: [id_time])
+}
+
+
+/////////////////////// ATLETAS ///////////////////////
+
+model AtletaJogo{
+  id_AtletaJogos   String @id @default(uuid())
+  score            Float?
+  id_treinador     String
+  id_jogo          String
+  id_atleta        String
+  Jogo             Jogo         @relation(fields: [id_jogo], references: [id_jogo])
+  Atleta           Atleta       @relation(fields: [id_atleta], references: [id_atleta])
+  Treinador        Treinador    @relation(fields: [id_treinador], references: [id_treinador])
+}
+
+model HistoricoClubeAtleta{
+  id_historicoClube  String @id @default(uuid())
+  score              Float?
+  id_atleta          String
+  id_time            String
+  numeroCamisa       Int[]
+  posicoesJogados    String[]
+  premiosIndividuais Json?
+  titulos            Json?
+  data_inicio        DateTime
+  data_final         DateTime
+  Time               Time      @relation(fields: [id_time], references: [id_time])
+  Atleta             Atleta    @relation(fields: [id_atleta], references: [id_atleta])
+}
+
+model Lesoes {
+  id_lesoes        String @id @default(uuid())
+  id_atleta        String
+  tipoLesao        Int
+  data_inicio      DateTime
+  data_final       DateTime
+  Atleta           Atleta      @relation(fields: [id_atleta], references: [id_atleta])
+}
+
+model Educacao {
+  educacao_id              String @id @default(uuid())
+  atleta_id                String
+  ensino_medio             String
+  data_inicio_ensino_medio DateTime?
+  data_final_ensino_medio  DateTime?
+  faculdade                String
+  data_inicio_faculdade    DateTime?
+  data_final_faculdade     DateTime?
+  curso                    String?
+  Atleta                   Atleta   @relation(fields: [atleta_id], references: [id_atleta])
+}
+
+model ExameMedico {
+  exame_id      String @id @default(uuid())
+  atleta_id     String
+  tipo_exame    String
+  Atleta        Atleta   @relation(fields: [atleta_id], references: [id_atleta])
+}
+
+model Teste {
+  teste_id      String @id @default(uuid())
+  time_id       String
+  atleta_id     String
+  resultado     String
+  data_inicio   DateTime
+  data_final    DateTime
+  Atleta        Atleta   @relation(fields: [atleta_id], references: [id_atleta])
+  Time          Time     @relation(fields: [time_id], references: [id_time])
+}
+
+/////////////////////// TREINADOR ///////////////////////
+model HistoricoClubeTreinador{
+  id_historicoClube  String @id @default(uuid())
+  score              Float?
+  id_treinador       String
+  id_time            String
+  premiosIndividuais Json?
+  titulos            Json?
+  data_inicio        DateTime
+  data_final         DateTime
+  Time               Time      @relation(fields: [id_time], references: [id_time])
+  Treinador          Treinador    @relation(fields: [id_treinador], references: [id_treinador])
+}
