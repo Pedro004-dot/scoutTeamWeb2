@@ -35,7 +35,7 @@ class CreateAtletaService {
       });
       return atleta;
     } catch (error) {
-      console.error("Erro ao criar atleta:", error); // Log de erro
+      console.error("Erro ao criar atleta:", error); 
       throw new Error("Não foi possível criar o atleta");
     }
   }

@@ -103,7 +103,7 @@ model Organizador {
 
 model Time {
   id_time            String @id @default(uuid())
-  categorias         String
+  categorias         String[]
   modelo_uniforme    String?
   escudo             String?
   id_usuario         String
@@ -123,12 +123,12 @@ model Time {
 
 model Treinador {
   id_treinador            String @id @default(uuid())
-  id_time                 String
+  id_time                 String?
   cref                    String?
-  categoria               String
+  categoria               String[]
   id_usuario              String
   Usuario                 Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
-  Time                    Time      @relation(fields: [id_time], references: [id_time])
+  Time                    Time?      @relation(fields: [id_time], references: [id_time])
   AtletaJogos             AtletaJogo[]
   HistoricoTreinador      HistoricoClubeTreinador[]
   
@@ -161,7 +161,7 @@ model Atleta {
 model Empresario {
   id_empresario   String @id @default(uuid())
   id_usuario      String
-  categoria       String
+  categoria       String[]
   Usuario         Usuario     @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
   Atletas         Atleta[]
 }
