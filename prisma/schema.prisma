@@ -107,9 +107,9 @@ model Time {
   modelo_uniforme    String?
   escudo             String?
   id_usuario         String
-  id_competicao      String
+  id_competicao      String?
   Usuario            Usuario       @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
-  Competicoes        Competicao    @relation(fields: [id_competicao], references: [id_competicao])
+  Competicoes        Competicao?    @relation(fields: [id_competicao], references: [id_competicao])
   Atletas            Atleta[]
   Treinadores        Treinador[]
   Jogos              Jogo[]
