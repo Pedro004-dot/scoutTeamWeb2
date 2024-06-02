@@ -25,6 +25,7 @@ model Usuario {
   Treinadores       Treinador[]   
   Atletas           Atleta[]      
   Empresarios       Empresario[]  
+  Competicoes       Competicao[]
 }
 
 model Pessoa {
@@ -98,18 +99,16 @@ model Organizador {
   id_usuario      String
   Usuario         Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
 
-  Competicoes     Competicao[]
+  // Competicoes     Competicao[]
 }
 
 model Time {
-  id_time            String @id @default(uuid())
+  id_time            String   @id @default(uuid())
   categorias         String[]
   modelo_uniforme    String?
   escudo             String?
   id_usuario         String
-  id_competicao      String?
-  Usuario            Usuario       @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
-  Competicoes        Competicao?    @relation(fields: [id_competicao], references: [id_competicao])
+  Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
   Atletas            Atleta[]
   Treinadores        Treinador[]
   Jogos              Jogo[]
@@ -119,6 +118,7 @@ model Time {
   Historico          HistoricoClubeAtleta[]
   Teste              Teste[]
   HistoricoTreinador HistoricoClubeTreinador[]
+  
 }
 
 model Treinador {
@@ -169,17 +169,19 @@ model Empresario {
 /////////////////////// CAMPEONATO///////////////////////
 
 model Competicao {
-  id_competicao   String @id @default(uuid())
-  id_organizador  String
-  orgao_publico   Boolean
-  data_inicio     DateTime
-  data_fim        DateTime
-  regulamento     String
-  Organizador     Organizador @relation(fields: [id_organizador], references: [id_organizador])
-  Jogos           Jogo[]
-  Times           Time[]
+  id_competicao      String   @id @default(uuid())
+  id_usuario         String
+  nome_campeonato    String
+  formato_campeonato String
+  quantidade_times   String
+  orgao_publico      Boolean
+  data_inicio        DateTime
+  data_fim           DateTime
+  regulamento        String
+  times_ids          String[] 
+  Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario])
+  Jogos              Jogo[]
 }
-
 model Jogo {
   id_jogo         String @id @default(uuid())
   id_time         String

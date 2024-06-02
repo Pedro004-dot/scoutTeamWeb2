@@ -9,6 +9,9 @@ class OrganizerRepository {
   async findOrganizerById(id_usuario: string): Promise<Organizador | null> {
     return prismaClient.organizador.findFirst({ where: { id_usuario } });
   }
+  async findOrganizerByUserId(id_usuario: string): Promise<Organizador | null> {
+    return prismaClient.organizador.findFirst({ where: { id_usuario } });
+  }
 
   async updateOrganizer(id: string, data: Partial<Organizador>): Promise<Organizador> {
     return prismaClient.organizador.update({ where: { id_organizador: id }, data });

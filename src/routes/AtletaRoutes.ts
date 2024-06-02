@@ -5,5 +5,5 @@ import { DetailsAtletaController } from "../controllers/atleta/DetailsAtletaCont
 const atletaRouter = Router()
 
 atletaRouter.post('/createAtleta',isAuthenticate, new CreateAtletaController().handle);
-atletaRouter.post('/getAtleta',isAuthenticate, new DetailsAtletaController().handle)
+atletaRouter.get('/getAtleta',isAuthenticate, new DetailsAtletaController().handle)
 export {atletaRouter}
