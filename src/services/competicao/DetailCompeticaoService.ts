@@ -1,5 +1,5 @@
 import { Competicao } from "@prisma/client";
-import { CompetitionRepository } from "../../repository/competicao/Competicao";
+import { CompetitionRepository } from "../../repository/competicao/CompeticaoRepository";
 
 
 class CompeticaoDetailService {

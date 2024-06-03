@@ -119,6 +119,7 @@ model Time {
   Teste              Teste[]
   HistoricoTreinador HistoricoClubeTreinador[]
   
+  
 }
 
 model Treinador {
@@ -180,32 +181,34 @@ model Competicao {
   regulamento        String
   times_ids          String[] 
   Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario])
-  Jogos              Jogo[]
+  Partida              Partida[]
 }
 model Jogo {
   id_jogo         String @id @default(uuid())
+  id_partida      String
   id_time         String
-  id_competicao   String
   gols_time       Int
   formacao_time   String
-  Time            Time        @relation(fields: [id_time], references: [id_time])
-  Competicao      Competicao  @relation(fields: [id_competicao], references: [id_competicao])
-  Partidas        Partida[]
+  Partida         Partida  @relation(fields: [id_partida], references: [id_partida])
+  Time            Time     @relation(fields: [id_time], references: [id_time])
   Eventos         Evento[]
   EscalacoesTime  EscalacaoTime[]
   AtletaJogos     AtletaJogo[]
 }
 
+
 model Partida {
   id_partida      String @id @default(uuid())
   dia_jogo        DateTime
   id_estadio      String
-  id_jogo         String
+  id_competicao   String
   sumula          String
-  Jogo            Jogo      @relation(fields: [id_jogo], references: [id_jogo])
-  Estadio         Estadio   @relation(fields: [id_estadio], references: [id_estadio])
+  Competicao      Competicao  @relation(fields: [id_competicao], references: [id_competicao])
+  Estadio         Estadio     @relation(fields: [id_estadio], references: [id_estadio])
+  Jogo            Jogo[]
   Arbitros        Arbitro[]
 }
+
 
 model Arbitro {
   id_arbitro      String @id @default(uuid())

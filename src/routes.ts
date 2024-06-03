@@ -8,6 +8,8 @@ import { treinadorRouter } from './routes/TreinadorRoutes';
 import { timeRouter } from './routes/TimeRoutes';
 import { competicaoRouter } from './routes/CompeticaoRoutes';
 import {estadioRouter} from './routes/EstadioRoutes'
+import {jogoRouter} from "./routes/JogoRoutes"
+import { partidaRouter } from './routes/PartidaRoutes';
 
 const router = Router();
 
@@ -19,5 +21,7 @@ router.use('/treinador',treinadorRouter)
 router.use('/time',timeRouter)
 router.use('/competicao',competicaoRouter)
 router.use('/estadio',estadioRouter)
+router.use('/jogo',jogoRouter)
+router.use('/partida',partidaRouter)
 
 export default router;

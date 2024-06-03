@@ -1,0 +1,54 @@
+import prismaClient from "../../prisma";
+import { Partida } from "@prisma/client";
+
+class PartidaRepository {
+  async createPartida(data: Omit<Partida, 'id_partida'>): Promise<Partida> {
+    return prismaClient.partida.create({
+      data
+    });
+  }
+
+  async getPartidaById(id_partida: string): Promise<Partida | null> {
+    return prismaClient.partida.findFirst({
+      where: { id_partida },
+      include:{
+        Jogo:{
+          include:{
+            Time:true
+          }
+        }
+      }
+    });
+  }
+
+  async getPartidaDetails(id_partida: string): Promise<Partida | null> {
+    return prismaClient.partida.findFirst({
+      where: { id_partida },
+      include: {
+        Jogo: {
+          include: {
+            Time: true,
+          }
+        },
+        Estadio: true,
+        Competicao: true,
+        Arbitros: true
+      }
+    });
+  }
+
+  async updatePartida(id_partida: string, data: Partial<Partida>): Promise<Partida> {
+    return prismaClient.partida.update({
+      where: { id_partida },
+      data
+    });
+  }
+
+  async deletePartida(id_partida: string): Promise<void> {
+    await prismaClient.partida.delete({
+      where: { id_partida }
+    });
+  }
+}
+
+export { PartidaRepository };

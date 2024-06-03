@@ -1,6 +1,6 @@
 
 import { Competicao } from "@prisma/client";
-import { CompetitionRepository } from "../../repository/competicao/Competicao";
+import { CompetitionRepository } from "../../repository/competicao/CompeticaoRepository";
 import { OrganizerRepository } from "../../repository/organizador/OrganizerRepository";
 import { TimeRepository } from "../../repository/time/TeamRepository";
 
