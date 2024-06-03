@@ -36,7 +36,7 @@ class CreateUserService {
     const { email, senha, perfil, nome_usuario } = userData;
 
     if (!email) {
-      throw new Error("Email incorreto");
+      throw new Error("Email ou senha incorreto");
     }
 
     const userAlreadyExists = await this.userRepository.findUserByEmail(email);
