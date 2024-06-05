@@ -2,11 +2,15 @@ import prismaClient from "../../prisma";
 import { Partida } from "@prisma/client";
 
 class PartidaRepository {
-  async createPartida(data: Omit<Partida, 'id_partida'>): Promise<Partida> {
+  async createPartida(data: Omit<Partida, 'id_partida'> & { Arbitros: { create: { id_arbitro: string }[] } }): Promise<Partida> {
     return prismaClient.partida.create({
-      data
+      data: {
+        ...data,
+        Arbitros: data.Arbitros
+      }
     });
   }
+
 
   async getPartidaById(id_partida: string): Promise<Partida | null> {
     return prismaClient.partida.findFirst({

@@ -198,28 +198,35 @@ model Jogo {
 
 
 model Partida {
-  id_partida      String @id @default(uuid())
-  dia_jogo        DateTime
-  id_estadio      String
-  id_competicao   String
-  sumula          String
-  Competicao      Competicao  @relation(fields: [id_competicao], references: [id_competicao])
-  Estadio         Estadio     @relation(fields: [id_estadio], references: [id_estadio])
-  Jogo            Jogo[]
-  Arbitros        Arbitro[]
+  id_partida         String @id @default(uuid())
+  dia_jogo           DateTime
+  id_estadio         String
+  id_competicao      String
+  sumula             String
+  Competicao         Competicao  @relation(fields: [id_competicao], references: [id_competicao])
+  Estadio            Estadio     @relation(fields: [id_estadio], references: [id_estadio])
+  Jogo               Jogo[]
+  Arbitros           ComissaoArbitragem[]
 }
-
 
 model Arbitro {
   id_arbitro      String @id @default(uuid())
   nome            String
   tipo_arbitragem String
+  Partidas        ComissaoArbitragem[]
+}
+
+model ComissaoArbitragem {
   id_partida      String
-  Partida         Partida    @relation(fields: [id_partida], references: [id_partida])
+  id_arbitro      String
+  Partida         Partida @relation(fields: [id_partida], references: [id_partida])
+  Arbitro         Arbitro @relation(fields: [id_arbitro], references: [id_arbitro])
+
+  @@id([id_partida, id_arbitro])
 }
 
 model Evento {
-  id_evento       String @id @default(uuid())
+  id_evento       String  @id @default(uuid())
   tipo_evento     String
   minuto_jogo     Int
   id_atleta       String

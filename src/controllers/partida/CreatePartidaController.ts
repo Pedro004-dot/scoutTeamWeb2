@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { CreatePartidaService } from "../../services/partida/CreatePartidaService";
 
+
 class CreatePartidaController {
   async handle(req: Request, res: Response): Promise<Response> {
-    const { dia_jogo, id_estadio, id_competicao, sumula } = req.body;
+    const { dia_jogo, id_estadio, id_competicao, sumula, id_arbitros } = req.body;
 
     const createPartidaService = new CreatePartidaService();
 
@@ -12,7 +13,8 @@ class CreatePartidaController {
         dia_jogo,
         id_estadio,
         id_competicao,
-        sumula
+        sumula,
+        id_arbitros
       });
 
       return res.json(partida);
