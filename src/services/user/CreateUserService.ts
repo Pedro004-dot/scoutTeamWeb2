@@ -39,9 +39,13 @@ class CreateUserService {
       throw new Error("Email ou senha incorreto");
     }
 
-    const userAlreadyExists = await this.userRepository.findUserByEmail(email);
-    if (userAlreadyExists) {
-      throw new Error("Usuário já existe");
+    const emailAlreadyExists = await this.userRepository.findUserByEmail(email);
+    if (emailAlreadyExists) {
+      throw new Error("Email já cadastrado");
+    }
+    const userNameAlreadyExists = await this.userRepository.findUserByUserName(nome_usuario);
+    if (userNameAlreadyExists) {
+      throw new Error("Nome de usuario já cadastrado");
     }
 
     const passwordHash = await hash(senha, 8);

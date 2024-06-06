@@ -14,6 +14,14 @@ class UserRepository {
       Pessoa:true
   } });
   }
+  async findUserByUserName(userName: string): Promise<Usuario | null> {
+    return prismaClient.usuario.findUnique({  where:{
+      nome_usuario: userName
+  },
+  include:{
+      Pessoa:true
+  } });
+  }
 
   async findUserById(id_usuario: string): Promise<Usuario | null> {
     return prismaClient.usuario.findUnique({

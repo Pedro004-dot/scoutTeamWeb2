@@ -9,8 +9,12 @@ class PersonRepository {
   async findPersonByUserId(userId: string): Promise<Pessoa | null> {
     return prismaClient.pessoa.findUnique({
       where: { id_usuario: userId },
+      include:{
+        Usuario: true
+      }
     });
   }
+
   async updatePerson(userId: string, data: Partial<Pessoa>): Promise<Pessoa> {
     return prismaClient.pessoa.update({
       where: { id_usuario: userId },
