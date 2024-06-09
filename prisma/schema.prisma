@@ -118,7 +118,7 @@ model Time {
   Historico          HistoricoClubeAtleta[]
   Teste              Teste[]
   HistoricoTreinador HistoricoClubeTreinador[]
-  
+  Eventos         Evento[]
   
 }
 
@@ -191,7 +191,6 @@ model Jogo {
   formacao_time   String
   Partida         Partida  @relation(fields: [id_partida], references: [id_partida])
   Time            Time     @relation(fields: [id_time], references: [id_time])
-  Eventos         Evento[]
   EscalacoesTime  EscalacaoTime[]
   AtletaJogos     AtletaJogo[]
 }
@@ -207,6 +206,8 @@ model Partida {
   Estadio            Estadio     @relation(fields: [id_estadio], references: [id_estadio])
   Jogo               Jogo[]
   Arbitros           ComissaoArbitragem[]
+  Eventos         Evento[]
+
 }
 
 model Arbitro {
@@ -230,21 +231,24 @@ model Evento {
   tipo_evento     String
   minuto_jogo     Int
   id_atleta       String
-  id_jogo         String
+  id_partida      String
+  id_time         String
   Atleta          Atleta   @relation(fields: [id_atleta], references: [id_atleta])
-  Jogo            Jogo     @relation(fields: [id_jogo], references: [id_jogo])
+  Partida         Partida  @relation(fields: [id_partida], references: [id_partida])
+  Time            Time     @relation(fields: [id_time], references: [id_time])
 }
 
 model EscalacaoTime {
-  id_EscalacaoTime String @id @default(uuid())
-  posicao          String 
-  id_atleta        String
-  id_jogo          String
-  id_time          String
-  
-  Time             Time      @relation(fields: [id_time], references: [id_time])
-  Atleta           Atleta    @relation(fields: [id_atleta], references: [id_atleta])
-  Jogo             Jogo      @relation(fields: [id_jogo], references: [id_jogo])
+  id_escalacao  String @id @default(uuid())
+  id_jogo       String
+  id_time       String
+  id_atleta     String
+  posicao       String
+  formacao      String
+
+  Jogo          Jogo     @relation(fields: [id_jogo], references: [id_jogo], onDelete: Cascade)
+  Time          Time     @relation(fields: [id_time], references: [id_time], onDelete: Cascade)
+  Atleta        Atleta   @relation(fields: [id_atleta], references: [id_atleta], onDelete: Cascade)
 }
 
 /////////////////////// TIME ///////////////////////

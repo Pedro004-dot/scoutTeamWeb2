@@ -1,29 +1,38 @@
 import { Estadio } from "@prisma/client";
+import { TimeRepository } from "../../repository/time/TeamRepository";
 import { EstadioRepository } from "../../repository/estadio/EstadioRepository";
+
+
 interface EstadioRequest {
-    nome: string;
-    cidade_endereco: string;
-    estado_endereco: string;
-    capacidade: number;
-    tipo_gramado: string;
-    id_time: string;
+  nome: string;
+  cidade_endereco: string;
+  estado_endereco: string;
+  capacidade: number;
+  tipo_gramado: string;
+  id_time: string;
+}
+
+class CreateEstadioService {
+  private estadioRepository: EstadioRepository;
+  private timeRepository: TimeRepository;
+
+  constructor() {
+    this.estadioRepository = new EstadioRepository();
+    this.timeRepository = new TimeRepository();
   }
-  class CreateEstadioService {
-    private estadioRepository: EstadioRepository;
-  
-    constructor() {
-      this.estadioRepository = new EstadioRepository();
+
+  async execute(estadioData: EstadioRequest): Promise<Estadio> {
+    const { id_time } = estadioData;
+
+    // Verifica se o time existe
+    const timeExists = await this.timeRepository.findTeamById(id_time);
+    if (!timeExists) {
+      throw new Error("Time não existe");
     }
-  
-    async execute(data: EstadioRequest): Promise<Estadio> {
-      try {
-        const estadio = await this.estadioRepository.createEstadio(data);
-        return estadio;
-      } catch (error) {
-        console.error("Erro ao criar estádio:", error);
-        throw new Error("Não foi possível criar o estádio");
-      }
-    }
+
+    // Cria o estádio
+    return this.estadioRepository.createEstadio(estadioData);
   }
-  
-  export { CreateEstadioService };
+}
+
+export { CreateEstadioService };

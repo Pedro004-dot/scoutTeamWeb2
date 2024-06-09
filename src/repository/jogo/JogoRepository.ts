@@ -34,6 +34,11 @@ class JogoRepository {
       }
     });
   }
+  async getEscalacaoByJogos(id_jogo: string): Promise<Jogo | null> {
+    return prismaClient.jogo.findFirst({
+      where: { id_jogo }
+    });
+  }
 }
 
 export { JogoRepository };
