@@ -4,6 +4,6 @@ import { CreateOrganizerController } from "../controllers/organizador/CreateOrga
 import { DetailOrganizerController } from "../controllers/organizador/DetailOrganizerController";
 const organizadorRouter = Router();
 
-organizadorRouter.post('/createOrganizer', isAuthenticate,new CreateOrganizerController().handle);
-organizadorRouter.get('/getOrganizer', isAuthenticate,new DetailOrganizerController().handle)
+organizadorRouter.post('/createOrganizador', isAuthenticate,new CreateOrganizerController().handle);
+organizadorRouter.get('/getOrganizador', isAuthenticate,new DetailOrganizerController().handle)
 export  {organizadorRouter}

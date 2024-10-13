@@ -4,7 +4,7 @@ import { EstadioRepository } from "../../repository/estadio/EstadioRepository";
 import { CompetitionRepository } from "../../repository/competicao/CompeticaoRepository";
 import { JogoRepository } from "../../repository/jogo/JogoRepository";
 import { ArbitroRepository } from "../../repository/arbitro/ArbitroRepository";
-
+import { TimeRepository } from "../../repository/time/TeamRepository";
 
 interface PartidaRequest {
   dia_jogo: Date;
@@ -12,9 +12,11 @@ interface PartidaRequest {
   id_competicao: string;
   sumula: string;
   id_arbitros: string[];
+  times_ids: string [];
 }
 
 class CreatePartidaService {
+  private teamRepository: TimeRepository
   private partidaRepository: PartidaRepository;
   private estadioRepository: EstadioRepository;
   private competitionRepository: CompetitionRepository;
@@ -22,6 +24,7 @@ class CreatePartidaService {
   private arbitroRepository: ArbitroRepository;
 
   constructor() {
+    this.teamRepository = new TimeRepository();
     this.partidaRepository = new PartidaRepository();
     this.estadioRepository = new EstadioRepository();
     this.competitionRepository = new CompetitionRepository();
@@ -30,7 +33,7 @@ class CreatePartidaService {
   }
 
   async execute(data: PartidaRequest): Promise<Partida> {
-    const { dia_jogo, id_estadio, id_competicao, sumula,id_arbitros } = data;
+    const { times_ids,dia_jogo, id_estadio, id_competicao, sumula,id_arbitros } = data;
 
     // Verifique se o estádio existe
     const estadioExists = await this.estadioRepository.getEstadioById(id_estadio);
@@ -49,10 +52,18 @@ class CreatePartidaService {
         throw new Error(`Árbitro com ID ${id_arbitro} não encontrado`);
       }
     }
+    const validTeams = await Promise.all(times_ids.map(async (teamId) => {
+      const team = await this.teamRepository.findTeamByUserId(teamId);
+      return team !== null;
+    }));
+    if (validTeams.includes(false)) {
+      throw new Error("Todos os times devem estar cadastrados.");
+    }
 
 
     try {
       const partida = await this.partidaRepository.createPartida({
+        times_ids,
         dia_jogo,
         id_estadio,
         id_competicao,

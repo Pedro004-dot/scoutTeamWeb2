@@ -111,7 +111,7 @@ model Time {
   Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
   Atletas            Atleta[]
   Treinadores        Treinador[]
-  Jogos              Jogo[]
+  
   Estadios           Estadio[]
   DiretoriaTime      DiretoriaTime[]
   EscalacoesTime     EscalacaoTime[]
@@ -183,18 +183,6 @@ model Competicao {
   Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario])
   Partida              Partida[]
 }
-model Jogo {
-  id_jogo         String @id @default(uuid())
-  id_partida      String
-  id_time         String
-  gols_time       Int
-  formacao_time   String
-  Partida         Partida  @relation(fields: [id_partida], references: [id_partida])
-  Time            Time     @relation(fields: [id_time], references: [id_time])
-  EscalacoesTime  EscalacaoTime[]
-  AtletaJogos     AtletaJogo[]
-}
-
 
 model Partida {
   id_partida         String @id @default(uuid())
@@ -202,9 +190,10 @@ model Partida {
   id_estadio         String
   id_competicao      String
   sumula             String
+  times_ids          String[]
+
   Competicao         Competicao  @relation(fields: [id_competicao], references: [id_competicao])
   Estadio            Estadio     @relation(fields: [id_estadio], references: [id_estadio])
-  Jogo               Jogo[]
   Arbitros           ComissaoArbitragem[]
   Eventos         Evento[]
 
@@ -240,15 +229,13 @@ model Evento {
 
 model EscalacaoTime {
   id_escalacao  String @id @default(uuid())
-  id_jogo       String
+  id_partida    String
   id_time       String
   id_atleta     String
   posicao       String
-  formacao      String
 
-  Jogo          Jogo     @relation(fields: [id_jogo], references: [id_jogo], onDelete: Cascade)
-  Time          Time     @relation(fields: [id_time], references: [id_time], onDelete: Cascade)
-  Atleta        Atleta   @relation(fields: [id_atleta], references: [id_atleta], onDelete: Cascade)
+  Time          Time     @relation(fields: [id_time], references: [id_time])
+  Atleta        Atleta   @relation(fields: [id_atleta], references: [id_atleta])
 }
 
 /////////////////////// TIME ///////////////////////
@@ -283,7 +270,7 @@ model AtletaJogo{
   id_treinador     String
   id_jogo          String
   id_atleta        String
-  Jogo             Jogo         @relation(fields: [id_jogo], references: [id_jogo])
+
   Atleta           Atleta       @relation(fields: [id_atleta], references: [id_atleta])
   Treinador        Treinador    @relation(fields: [id_treinador], references: [id_treinador])
 }

@@ -11,7 +11,7 @@ import { isAuthenticate } from "../middlewares/isAurthenticated";
 const eventoRouter = Router();
 
 
-eventoRouter.post('/evento', isAuthenticate, new CreateEventoController().handle);
+eventoRouter.post('/createEvento', isAuthenticate, new CreateEventoController().handle);
 eventoRouter.put('/evento/:id_evento', isAuthenticate,new UpdateEventoController().handle);
 eventoRouter.delete('/evento/:id_evento', isAuthenticate,new DeleteEventoController().handle);
 eventoRouter.get('/evento/:id_evento', isAuthenticate,new GetEventoController().handle);

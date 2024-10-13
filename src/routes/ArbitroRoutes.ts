@@ -7,7 +7,7 @@ const arbitroRouter = Router();
 const createArbitroController = new CreateArbitroController();
 const detailArbitroController = new DetailArbitroController();
 
-arbitroRouter.post('/arbitro', createArbitroController.handle);
+arbitroRouter.post('/createArbitro', createArbitroController.handle);
 arbitroRouter.get('/arbitro/:id_arbitro', detailArbitroController.handle);
 
 export { arbitroRouter };

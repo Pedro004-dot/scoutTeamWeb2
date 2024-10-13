@@ -1,6 +1,6 @@
 import { EventoRepository } from "../../repository/evento/EventoRepository";
 import { Evento, PrismaClient } from "@prisma/client";
-
+import { TimeRepository } from "../../repository/time/TeamRepository";
 const prismaClient = new PrismaClient();
 
 interface EventoRequest {
@@ -12,22 +12,23 @@ interface EventoRequest {
 }
 
 class CreateEventoService {
+  private teamRepository: TimeRepository;
   private eventoRepository: EventoRepository;
 
   constructor() {
     this.eventoRepository = new EventoRepository();
+    this.teamRepository = new TimeRepository();
   }
 
   async execute(eventoData: EventoRequest): Promise<Evento> {
     const { tipo_evento, minuto_jogo, id_atleta, id_partida, id_time } = eventoData;
 
     // Verificação se o time existe
-    const teamExists = await prismaClient.time.findUnique({
-      where: { id_time }
-    });
-    if (!teamExists) {
-      throw new Error("Time não existe");
+    const team = await this.teamRepository.findTeamById(id_time);
+    if (team === null) {
+      throw new Error("O time deve estar cadastrado.");
     }
+    
 
     // Verificação se o atleta existe
     const athleteExists = await prismaClient.atleta.findUnique({
@@ -56,6 +57,7 @@ class CreateEventoService {
 
       return evento;
     } catch (error) {
+      console.log(`Erro: ${error} ` )
       throw new Error("Não foi possível criar o evento");
     }
   }

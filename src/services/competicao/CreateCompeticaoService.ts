@@ -47,7 +47,7 @@ class CreateCompetitionService {
 
     // Regra 2: Validação de Times Cadastrados
     const validTeams = await Promise.all(times_ids.map(async (teamId) => {
-      const team = await this.teamRepository.findTimeById(teamId);
+      const team = await this.teamRepository.findTeamByUserId(teamId);
       return team !== null;
     }));
     if (validTeams.includes(false)) {

@@ -16,11 +16,7 @@ class PartidaRepository {
     return prismaClient.partida.findFirst({
       where: { id_partida },
       include:{
-        Jogo:{
-          include:{
-            Time:true
-          }
-        }
+
       }
     });
   }
@@ -29,11 +25,6 @@ class PartidaRepository {
     return prismaClient.partida.findFirst({
       where: { id_partida },
       include: {
-        Jogo: {
-          include: {
-            Time: true,
-          }
-        },
         Estadio: true,
         Competicao: true,
         Arbitros: true
