@@ -8,106 +8,239 @@ datasource db {
 }
 
 model Usuario {
-  id_usuario        String        @id @default(uuid())
-  email             String        @unique
+  id_usuario        String       @id @default(uuid())
+  email             String       @unique
   senha             String
-  perfil            String
-  nome_usuario      String        @unique
-  Pessoa            Pessoa?      
+  perfil            TipoPerfil
+  nome_usuario      String       @unique
 
+  // Campos pessoais
+  nome              String
+  cidade_endereco   String
+  estado_endereco   String
+  data_nascimento   DateTime
+  nacionalidade     String
+  telefone_contato  String
+  foto              String?
+
+  // Relações de perfis específicos
+  Atleta            Atleta?
+  Treinador         Treinador?
+  Empresario        Empresario?
+  Time              Time?
+  Organizador       Organizador?
+
+  // Relações com a rede social
   Posts             Postagem[]
   Likes             Curtida[]
   Comments          Comentario[]
   Shares            Compartilhamento[]
   SavedPosts        PostagemSalva[]
-  Organizadores     Organizador[] 
-  Times             Time[]        
-  Treinadores       Treinador[]   
-  Atletas           Atleta[]      
-  Empresarios       Empresario[]  
+  Notificacoes      Notificacao[]
+  MensagensEnviadas Mensagem[]   @relation("MensagensEnviadas")
+  MensagensRecebidas Mensagem[]  @relation("MensagensRecebidas")
+  ConexoesSolicitantes Conexao[] @relation("ConexoesSolicitantes")
+  ConexoesSolicitadas  Conexao[] @relation("ConexoesSolicitadas")
   Competicoes       Competicao[]
+
+  @@index([nome_usuario])
 }
 
-model Pessoa {
-  id_pessoa        String @id @default(uuid())
-  id_usuario       String      @unique
-  cidade_endereco  String
-  estado_endereco  String
-  data_nascimento  DateTime
-  nacionalidade    String
-  telefone_contato String
-  foto             String?
-  nome             String
-  Usuario          Usuario    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
-}
+
 
 /////////////////////// REDE SOCIAL ///////////////////////
-model Postagem {
-  id_postagem    String @id @default(uuid())
-  id_usuario     String
-  conteudo       String
-  url_imagem     String?
-  criado_em      DateTime @default(now())
-  Usuario        Usuario     @relation(fields: [id_usuario], references: [id_usuario])
-
-  Curtidas       Curtida[]
-  Comentarios    Comentario[]
-  Compartilhamentos Compartilhamento[]
-  PostagensSalvas PostagemSalva[]
+enum TipoPostagem {
+  TEXTO
+  IMAGEM
+  VIDEO
+  AUDIO
 }
+
+model Postagem {
+  id_postagem     String        @id @default(uuid())
+  id_usuario      String
+  conteudo        String
+  data_criacao    DateTime      @default(now())
+  midia           String[]     // URLs de mídia (imagens, vídeos)
+  tipo            TipoPostagem  // Enum: TEXTO, IMAGEM, VIDEO, ETC.
+
+  // Relações
+  Usuario         Usuario       @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  Likes           Curtida[]
+  Comments        Comentario[]
+  Shares          Compartilhamento[]
+  SavedBy         PostagemSalva[]
+
+  @@index([id_usuario])
+}
+
 
 model Curtida {
-  id_curtida    String @id @default(uuid())
-  id_usuario    String
-  id_postagem   String
-  criado_em     DateTime @default(now())
-  Usuario       Usuario     @relation(fields: [id_usuario], references: [id_usuario])
-  Postagem      Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+  id_curtida      String     @id @default(uuid())
+  id_usuario      String
+  id_postagem     String
+  data_curtida    DateTime   @default(now())
+
+  // Relações
+  Usuario         Usuario    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  Postagem        Postagem   @relation(fields: [id_postagem], references: [id_postagem], onDelete: Cascade)
+
+  @@unique([id_usuario, id_postagem]) // Um usuário pode curtir uma postagem apenas uma vez
+  @@index([id_postagem])
 }
+
 
 model Comentario {
-  id_comentario String @id @default(uuid())
-  id_usuario    String
-  id_postagem   String
-  conteudo      String
-  criado_em     DateTime @default(now())
-  Usuario       Usuario     @relation(fields: [id_usuario], references: [id_usuario])
-  Postagem      Postagem    @relation(fields: [id_postagem], references: [id_postagem])
-}
-
-model Compartilhamento {
-  id_compartilhamento String @id @default(uuid())
-  id_usuario          String
-  id_postagem         String
-  criado_em           DateTime @default(now())
-  Usuario             Usuario     @relation(fields: [id_usuario], references: [id_usuario])
-  Postagem            Postagem    @relation(fields: [id_postagem], references: [id_postagem])
-}
-
-model PostagemSalva {
-  id_postagemsalva String @id @default(uuid())
+  id_comentario    String      @id @default(uuid())
   id_usuario       String
   id_postagem      String
-  criado_em        DateTime @default(now())
-  Usuario          Usuario     @relation(fields: [id_usuario], references: [id_usuario])
-  Postagem         Postagem    @relation(fields: [id_postagem], references: [id_postagem])
+  conteudo         String
+  data_comentario  DateTime    @default(now())
+  id_comentario_pai String?    // Comentário ao qual este comentário é uma resposta (opcional)
+
+  // Relações
+  Usuario          Usuario     @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  Postagem         Postagem    @relation(fields: [id_postagem], references: [id_postagem], onDelete: Cascade)
+  ComentarioPai    Comentario? @relation("Resposta", fields: [id_comentario_pai], references: [id_comentario])
+  Respostas        Comentario[] @relation("Resposta") // Não especificamos `fields` ou `references` aqui
+
+  @@index([id_postagem])
 }
 
+
+
+model Compartilhamento {
+  id_compartilhamento String   @id @default(uuid())
+  id_usuario          String
+  id_postagem         String
+  data_compartilhamento DateTime @default(now())
+
+  // Relações
+  Usuario             Usuario    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  Postagem            Postagem   @relation(fields: [id_postagem], references: [id_postagem], onDelete: Cascade)
+
+  @@index([id_usuario])
+  @@index([id_postagem])
+}
+
+
+model PostagemSalva {
+  id_postagem_salva String     @id @default(uuid())
+  id_usuario        String
+  id_postagem       String
+  data_salvamento   DateTime   @default(now())
+
+  // Relações
+  Usuario           Usuario    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  Postagem          Postagem   @relation(fields: [id_postagem], references: [id_postagem], onDelete: Cascade)
+
+  @@unique([id_usuario, id_postagem]) // Um usuário pode salvar uma postagem apenas uma vez
+  @@index([id_usuario])
+}
+
+model Notificacao {
+  id_notificacao    String        @id @default(uuid())
+  id_usuario        String
+  tipo              TipoNotificacao
+  mensagem          String
+  data_notificacao  DateTime      @default(now())
+  lido              Boolean       @default(false)
+  referenciaId      String?       // Pode referenciar uma postagem, comentário, etc.
+
+  // Relação
+  Usuario           Usuario       @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+
+  @@index([id_usuario])
+}
+
+enum TipoNotificacao {
+  CURTIDA
+  COMENTARIO
+  COMPARTILHAMENTO
+  SEGUIDOR
+  MENSAGEM
+  OUTRO
+}
+
+model Mensagem {
+  id_mensagem       String        @id @default(uuid())
+  id_usuario_remetente   String
+  id_usuario_destinatario String
+  conteudo          String
+  data_mensagem     DateTime      @default(now())
+  lida              Boolean       @default(false)
+
+  // Relações
+  UsuarioRemetente      Usuario   @relation("MensagensEnviadas", fields: [id_usuario_remetente], references: [id_usuario], onDelete: Cascade)
+  UsuarioDestinatario   Usuario   @relation("MensagensRecebidas", fields: [id_usuario_destinatario], references: [id_usuario], onDelete: Cascade)
+
+  @@index([id_usuario_remetente])
+  @@index([id_usuario_destinatario])
+}
+
+model Conexao {
+  id_conexao             String     @id @default(uuid())
+  id_usuario_solicitante String
+  id_usuario_solicitado  String
+  status                 StatusConexao
+  data_solicitacao       DateTime   @default(now())
+
+  // Relações
+  UsuarioSolicitante     Usuario    @relation("ConexoesSolicitantes", fields: [id_usuario_solicitante], references: [id_usuario], onDelete: Cascade)
+  UsuarioSolicitado      Usuario    @relation("ConexoesSolicitadas", fields: [id_usuario_solicitado], references: [id_usuario], onDelete: Cascade)
+
+  @@unique([id_usuario_solicitante, id_usuario_solicitado])
+  @@index([id_usuario_solicitante])
+  @@index([id_usuario_solicitado])
+}
+
+enum StatusConexao {
+  PENDENTE
+  ACEITA
+  RECUSADA
+  BLOQUEADA
+}
+
+
 /////////////////////// PERFIS ///////////////////////
+enum TipoPerfil {
+  ATLETA
+  TREINADOR
+  ORGANIZADOR
+  TIME
+  EMPRESARIO
+}
+enum Categoria {
+  PROFISSIONAL
+  AMADOR
+  JUVENIL
+  INFANTIL
+  SUB20
+  SUB17
+  SUB15
+  SUB13
+  FEMININO
+  MASCULINO
+}
+
 model Organizador {
   id_organizador  String @id @default(uuid())
-  id_usuario      String
+  id_usuario      String @unique
+  
   Usuario         Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
 
   // Competicoes     Competicao[]
 }
 
+
 model Time {
   id_time            String   @id @default(uuid())
-  categorias         String[]
+  id_usuario         String @unique
+  nome_time          String
+  categorias         Categoria[]
   modelo_uniforme    String?
   escudo             String?
-  id_usuario         String
+
   Usuario            Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
   Atletas            Atleta[]
   Treinadores        Treinador[]
@@ -124,10 +257,11 @@ model Time {
 
 model Treinador {
   id_treinador            String @id @default(uuid())
+  id_usuario              String @unique
   id_time                 String?
   cref                    String?
-  categoria               String[]
-  id_usuario              String
+  categoria               Categoria[]
+  historico_times         String[]
   Usuario                 Usuario   @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
   Time                    Time?      @relation(fields: [id_time], references: [id_time])
   AtletaJogos             AtletaJogo[]
@@ -137,7 +271,7 @@ model Treinador {
 
 model Atleta {
   id_atleta           String @id @default(uuid())
-  id_usuario          String
+  id_usuario          String @unique
   id_time             String?
   altura              Float?
   peso                Float?
@@ -161,8 +295,8 @@ model Atleta {
 
 model Empresario {
   id_empresario   String @id @default(uuid())
-  id_usuario      String
-  categoria       String[]
+  id_usuario      String @unique
+  categoria       Categoria[]
   Usuario         Usuario     @relation(fields: [id_usuario], references: [id_usuario],onDelete: Cascade)
   Atletas         Atleta[]
 }
@@ -233,6 +367,7 @@ model EscalacaoTime {
   id_time       String
   id_atleta     String
   posicao       String
+  formacao      String
 
   Time          Time     @relation(fields: [id_time], references: [id_time])
   Atleta        Atleta   @relation(fields: [id_atleta], references: [id_atleta])

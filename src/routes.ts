@@ -13,6 +13,7 @@ import { arbitroRouter } from './routes/ArbitroRoutes';
 import { comissaoArbitragemRouter } from './routes/ComissaoArbitragemRoutes';
 import { eventoRouter } from './routes/EventoRoutes';
 import { escalacaoRouter } from './routes/EscalacaoRoutes';
+import { postagemRouter } from './routes/PostagemRoutes';
 
 const router = Router();
 
@@ -30,6 +31,6 @@ router.use('/organizador', organizadorRouter);
 router.use('/partida', partidaRouter);
 router.use('/time', timeRouter);
 router.use('/treinador', treinadorRouter);
-
-
+router.use('/post', postagemRouter)
+router.use('like',)
 export default router;
