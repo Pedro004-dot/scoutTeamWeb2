@@ -37,7 +37,7 @@ class CreateAtletaService {
     }
 
     // Verifique se o perfil do usuário é "atleta"
-    if (user.perfil !== "Atleta") {
+    if (user.perfil !== "ATLETA") {
       throw new Error("Usuário não tem o perfil de atleta");
     }
 

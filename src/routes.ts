@@ -14,6 +14,8 @@ import { comissaoArbitragemRouter } from './routes/ComissaoArbitragemRoutes';
 import { eventoRouter } from './routes/EventoRoutes';
 import { escalacaoRouter } from './routes/EscalacaoRoutes';
 import { postagemRouter } from './routes/PostagemRoutes';
+import { likeRouter } from './routes/LikeRoutes';
+import { comentarioRouter } from './routes/ComentarioRoutes';
 
 const router = Router();
 
@@ -32,5 +34,6 @@ router.use('/partida', partidaRouter);
 router.use('/time', timeRouter);
 router.use('/treinador', treinadorRouter);
 router.use('/post', postagemRouter)
-router.use('like',)
+router.use('/like',likeRouter)
+router.use('/comentario', comentarioRouter);
 export default router;
