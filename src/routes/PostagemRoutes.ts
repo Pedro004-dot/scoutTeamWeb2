@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { isAuthenticate } from "../middlewares/isAurthenticated";
 import { CreatePostController } from "../controllers/post/CreatePostController";
+import { GetPostController } from "../controllers/post/GetPostController";
 // import { GetPostsController } from "../controllers/post/GetPostsController";
 // import { DeletePostController } from "../controllers/post/DeletePostController";
 // import { UpdatePostController } from "../controllers/post/UpdatePostController";
@@ -11,7 +12,7 @@ const postagemRouter = Router();
 postagemRouter.post('/createPost', isAuthenticate, new CreatePostController().handle);
 
 // // Pega todas as postagens (ou postagens de um usuário específico)
-// postagemRouter.get('/', isAuthenticate, new GetPostsController().handle);
+postagemRouter.get('/get/:userId', isAuthenticate, new GetPostController().handle);
 
 // // Atualiza uma postagem existente
 // postagemRouter.put('/update/:postId', isAuthenticate, new UpdatePostController().handle);
