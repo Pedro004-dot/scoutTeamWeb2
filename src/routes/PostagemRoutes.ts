@@ -2,9 +2,8 @@ import { Router } from "express";
 import { isAuthenticate } from "../middlewares/isAurthenticated";
 import { CreatePostController } from "../controllers/post/CreatePostController";
 import { GetPostController } from "../controllers/post/GetPostController";
-// import { GetPostsController } from "../controllers/post/GetPostsController";
-// import { DeletePostController } from "../controllers/post/DeletePostController";
-// import { UpdatePostController } from "../controllers/post/UpdatePostController";
+import { DeletePostController } from "../controllers/post/DeletePostControlle";
+import { UpdatePostsController } from "../controllers/post/UpdatePostController";
 
 const postagemRouter = Router();
 
@@ -15,9 +14,9 @@ postagemRouter.post('/createPost', isAuthenticate, new CreatePostController().ha
 postagemRouter.get('/get/:userId', isAuthenticate, new GetPostController().handle);
 
 // // Atualiza uma postagem existente
-// postagemRouter.put('/update/:postId', isAuthenticate, new UpdatePostController().handle);
+ postagemRouter.put('/update/:postId', isAuthenticate, new UpdatePostsController().handle);
 
 // // Deleta uma postagem
-// postagemRouter.delete('/delete/:postId', isAuthenticate, new DeletePostController().handle);
+ postagemRouter.delete('/delete/:postId', isAuthenticate, new DeletePostController().handle);
 
 export { postagemRouter };
