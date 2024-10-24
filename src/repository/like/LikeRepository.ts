@@ -31,6 +31,14 @@ class LikeRepository {
       },
     });
   }
+
+  async findLikeByPost(postId: string) {
+    return await prismaClient.curtida.findMany({
+      where: {
+        id_postagem: postId,
+      },
+    });
+  }
 }
 
 export { LikeRepository };
