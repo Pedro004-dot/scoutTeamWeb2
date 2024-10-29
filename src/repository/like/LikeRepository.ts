@@ -23,10 +23,10 @@ class LikeRepository {
   }
 
   // Verifica se a curtida já existe
-  async findLike(postId: string, userId: string) {
+  async findLike(likeId: string, userId: string) {
     return await prismaClient.curtida.findFirst({
       where: {
-        id_postagem: postId,
+        id_curtida: likeId,
         id_usuario: userId,
       },
     });

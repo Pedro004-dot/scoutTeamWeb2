@@ -4,6 +4,7 @@ import { UserRepository } from "../../repository/user/UserRepository";
 
 interface GetLikeRequest {
   postId: string;
+  userId: string;
 }
 
 class GetLikeService {
@@ -16,11 +17,11 @@ class GetLikeService {
     this.userRepository = new UserRepository();
     this.postRepository = new PostRepository();
   }
-  async execute({ postId }: GetLikeRequest) {
-    // const user = await this.userRepository.findUserById(userId);
-    // if (!user) {
-    //   throw new Error("Usuário não existe");
-    // }
+  async execute({ postId,userId }: GetLikeRequest) {
+    const user = await this.userRepository.findUserById(userId);
+    if (!user) {
+      throw new Error("Usuário não existe");
+    }
     const post = await this.postRepository.findPostById(postId);
     if (!post) {
       throw new Error("O post não existe");
@@ -30,6 +31,7 @@ class GetLikeService {
     if (!likeExists) {
       throw new Error("Essa imagem não teve curtidas.");
     }
+    return likeExists
   }
 }
 

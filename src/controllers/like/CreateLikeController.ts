@@ -3,7 +3,7 @@ import { CreateLikeService } from "../../services/like/CreateLikeService";
 
 class CreateLikeController {
   async handle(req: Request, res: Response) {
-    const { postId } = req.body;
+    const { postId } = req.params;
     const userId = req.user_id; // O user_id vem do middleware de autenticação
 
     const createLikeService = new CreateLikeService();

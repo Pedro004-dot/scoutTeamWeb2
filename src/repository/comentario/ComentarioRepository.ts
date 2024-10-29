@@ -38,7 +38,6 @@ class ComentarioRepository {
       where: { id_comentario: commentId },
     });
   }
-
   // Método para obter todos os comentários de uma postagem
   async getCommentsByPost(postId: string) {
     const comments = await prismaClient.comentario.findMany({

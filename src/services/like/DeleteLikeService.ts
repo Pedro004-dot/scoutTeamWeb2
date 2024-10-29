@@ -3,7 +3,7 @@ import { PostRepository } from "../../repository/post/PostRepository";
 import { UserRepository } from "../../repository/user/UserRepository";
 
 interface DeleteLikeRequest {
-  postId: string;
+  likeId: string;
   userId: string;
 }
 
@@ -17,23 +17,19 @@ class DeleteLikeService {
     this.userRepository = new UserRepository();
     this.postRepository = new PostRepository();
   }
-  async execute({ postId, userId }: DeleteLikeRequest) {
+  async execute({ likeId, userId }: DeleteLikeRequest) {
     const user = await this.userRepository.findUserById(userId);
     if (!user) {
       throw new Error("Usuário não existe");
     }
-    const post = await this.postRepository.findPostById(postId);
-    if (!post) {
-      throw new Error("O post não existe");
-    }
     
-    const likeExists = await this.likeRepository.findLike(postId, userId);
+    const likeExists = await this.likeRepository.findLike(likeId, userId);
     if (!likeExists) {
       throw new Error("Você não curtiu esta postagem.");
     }
 
-    // Adiciona a curtida
-    const like = await this.likeRepository.removeLike(postId, userId);
+    // Remover a curtida
+    const like = await this.likeRepository.removeLike(likeId, userId);
     return like;
   }
 }

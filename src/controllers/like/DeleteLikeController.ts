@@ -3,13 +3,13 @@ import { DeleteLikeService } from "../../services/like/DeleteLikeService";
 
 class DeleteLikeController {
   async handle(req: Request, res: Response) {
-    const { postId } = req.body;
+    const { likeId } = req.params;
     const userId = req.user_id; // O user_id vem do middleware de autenticação
 
     const deleteLikeService = new DeleteLikeService();
 
     try {
-      const like = await deleteLikeService.execute({ postId, userId });
+      const like = await deleteLikeService.execute({ likeId, userId });
       return res.status(201).json("Like removido com sucesso");
     } catch (error) {
       console.log(error)

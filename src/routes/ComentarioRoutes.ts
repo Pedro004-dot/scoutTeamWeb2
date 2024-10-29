@@ -11,10 +11,10 @@ const comentarioRouter = Router();
 comentarioRouter.post('/create/:postId', isAuthenticate, new AddCommentController().handle);
 
 // Rota para atualizar um comentário
-comentarioRouter.put('/:commentId', isAuthenticate, new UpdateComentarioController().handle);
+comentarioRouter.put('/update/:commentId', isAuthenticate, new UpdateComentarioController().handle);
 
 // // Rota para deletar um comentário
-comentarioRouter.delete('/:commentId', isAuthenticate, new DeleteComentarioController().handle);
+comentarioRouter.delete('/delete/:commentId', isAuthenticate, new DeleteComentarioController().handle);
 
 // // Rota para obter todos os comentários de uma postagem
 comentarioRouter.get('/get/:postId', isAuthenticate, new GetCommentsController().handle);

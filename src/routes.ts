@@ -36,4 +36,5 @@ router.use('/treinador', treinadorRouter);
 router.use('/post', postagemRouter)
 router.use('/like',likeRouter)
 router.use('/comentario', comentarioRouter);
+// router.use('/salvarPost')
 export default router;
